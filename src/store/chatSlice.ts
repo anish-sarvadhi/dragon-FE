@@ -34,7 +34,7 @@ export const sendMessage = createAsyncThunk(
     try {
       // Call your real API
       const response = await fetch(
-        "https://04m7cxff-8000.inc1.devtunnels.ms/query",
+        "https://dragon-be.onrender.com/query",
         {
           method: "POST",
           headers: {
