@@ -1,9 +1,10 @@
+/** @format */
+
 import React, { useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { Copy, Check } from "lucide-react";
 import { RootState } from "../store/store";
 import { Message } from "../store/chatSlice";
-
 
 const ChatWindow: React.FC = () => {
   const { messages, isLoading } = useSelector((state: RootState) => state.chat);
@@ -48,14 +49,11 @@ const ChatWindow: React.FC = () => {
   const formatMessage = (text) => {
     const formattedText = text
       .split("\n")
-      .map((line) =>
-        line.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
-      )
+      .map((line) => line.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>"))
       .join("<br>");
-  
+
     return <div dangerouslySetInnerHTML={{ __html: formattedText }} />;
   };
-  
 
   return (
     <div className="flex-1 overflow-y-auto px-4 py-6 bg-gradient-to-b from-gray-50/50 to-white/50 chat-window">
@@ -141,7 +139,7 @@ const ChatWindow: React.FC = () => {
                   ></div>
                 </div>
                 <span className="text-xs text-gray-500 ml-2">
-                  AI is thinking...
+                  Dragon is thinking...
                 </span>
               </div>
             </div>

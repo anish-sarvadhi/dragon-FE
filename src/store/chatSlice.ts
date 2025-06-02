@@ -10,18 +10,22 @@ interface ChatState {
   messages: Message[];
   isLoading: boolean;
   error: string | null;
+  threadId: string | null;
 }
 
 const initialState: ChatState = {
   messages: [],
   isLoading: false,
   error: null,
+  threadId: null,
 };
 
 // Real API call to your backend
 export const sendMessage = createAsyncThunk(
   "chat/sendMessage",
-  async (message: string, { dispatch }) => {
+  async (message: string, { dispatch, getState }) => {
+    const state = getState() as { chat: ChatState };
+    const currentThreadId = state.chat.threadId;
     // Add user message immediately
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -40,7 +44,7 @@ export const sendMessage = createAsyncThunk(
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ query: message }),
+          body: JSON.stringify({ query: message, thread_id: currentThreadId || null  }),
         }
       );
 
@@ -49,6 +53,11 @@ export const sendMessage = createAsyncThunk(
       }
 
       const data = await response.json();
+
+       if (data.thread_id) {
+        dispatch(setThreadId(data.thread_id));
+      }
+
       const plainText =
         data.response ||
         data.answer ||
@@ -78,8 +87,12 @@ const chatSlice = createSlice({
     addMessage: (state, action: PayloadAction<Message>) => {
       state.messages.push(action.payload);
     },
+    setThreadId: (state, action: PayloadAction<string>) => {
+      state.threadId = action.payload;
+    },
     clearMessages: (state) => {
       state.messages = [];
+      state.threadId = null;
     },
   },
   extraReducers: (builder) => {
@@ -99,5 +112,5 @@ const chatSlice = createSlice({
   },
 });
 
-export const { addMessage, clearMessages } = chatSlice.actions;
+export const { addMessage, clearMessages, setThreadId } = chatSlice.actions;
 export default chatSlice.reducer;
